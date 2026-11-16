@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Robot 2027 • V2.3 Song Ngữ Chủ Động</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+
+  <!-- TOP STATUS & ACTION BAR -->
+  <div class="top-bar">
+    <div class="status-group">
+      <span id="netBadge" class="pill pill-online">🟢 Online</span>
+      <span id="aiBadge" class="pill pill-ai-err" onclick="toggleDrawer('modelDrawer')">🧠 Chưa nạp AI</span>
+      <span id="speedBadge" class="pill pill-speed">⚡ 0 ms</span>
+      <span id="proactiveBadge" class="pill pill-proactive-on" onclick="toggleProactiveMode()">🤖 Chủ động: BẬT</span>
+    </div>
+    <div class="icon-actions">
+      <button class="icon-btn" title="Gia đình & Nhật ký" onclick="toggleDrawer('familyDrawer')">👨‍👩‍👧‍👦</button>
+      <button class="icon-btn" title="Bộ não AI nhẹ Android" onclick="toggleDrawer('modelDrawer')">🧠</button>
+      <button class="icon-btn" title="Cài đặt Server" onclick="toggleDrawer('serverDrawer')">⚙️</button>
+    </div>
+  </div>
+
+  <!-- DRAWER 1: LIGHTWEIGHT ANDROID AI MODELS -->
+  <div id="modelDrawer" class="drawer">
+    <div class="drawer-title">
+      <span>🧠 Bộ não AI Siêu Nhẹ & Tương Thích Chuẩn Android</span>
+      <button class="mini-tool-btn" onclick="toggleDrawer('modelDrawer')">✕</button>
+    </div>
+    <select id="modelSelect">
+      <option value="smollm2_q4_0">1. SmolLM2-135M Q4_0 (85 MB • Nhanh & Chuẩn mọi Android)</option>
+      <option value="smollm2_iq3_xs">2. SmolLM2-135M IQ3_XS (68 MB • Siêu nhẹ cho máy RAM yếu)</option>
+      <option value="smollm2_q4_k_m">3. SmolLM2-135M Q4_K_M (105 MB • Cân bằng chất lượng)</option>
+      <option value="smollm1_q4_0">4. SmolLM-135M Q4_0 (82 MB • Phản hồi tức thì)</option>
+      <option value="qwen25_05b">5. Qwen2.5-0.5B Q4_K_M (398 MB • Thông minh nâng cao)</option>
+    </select>
+    <input type="text" id="modelUrlInput" placeholder="Link tải file .gguf trực tiếp..." />
+    <div class="btn-row">
+      <button class="btn-action btn-green" style="flex:1" onclick="downloadAndActivateModel()">⬇️ Tải & Kích hoạt Model</button>
+      <button class="btn-action btn-danger" onclick="clearLocalModels()">🗑️ Xóa</button>
+    </div>
+    <div class="progress-bar"><div id="modelProgressFill" class="progress-fill"></div></div>
+    <div id="modelStatusText" style="font-size:11.5px; color:#94a3b8;">
+      Mẹo: Bản <b>Q4_0 (85 MB)</b> tương thích 100% với llama.cpp trên mọi chip ARM Android và nhanh hơn Q4_K_M ~25%.
+    </div>
+  </div>
+
+  <!-- DRAWER 2: FAMILY & LEARNING REPORT -->
+  <div id="familyDrawer" class="drawer">
+    <div class="drawer-title">
+      <span>👨‍👩‍👧‍👦 Thành viên Gia đình & Lịch sử Học</span>
+      <button class="mini-tool-btn" onclick="toggleDrawer('familyDrawer')">✕</button>
+    </div>
+    <div id="familyList" style="display:flex; flex-direction:column; gap:6px;"></div>
+    <div class="btn-row">
+      <input type="text" id="newMemberName" placeholder="Tên (VD: Bi, Mom, Dad...)" style="flex:2" />
+      <input type="number" id="newMemberAge" placeholder="Tuổi" value="6" style="flex:1" />
+      <button class="btn-action btn-green" onclick="addFamilyMemberUI()">+ Thêm</button>
+    </div>
+    <div class="btn-row">
+      <button class="btn-action btn-purple" style="flex:1" onclick="showChildReportInChat()">📊 Xem báo cáo bé học hôm nay</button>
+      <button class="btn-action btn-slate" onclick="askBotForNewUser()">👋 Bot hỏi tên người mới</button>
+    </div>
+  </div>
+
+  <!-- DRAWER 3: BACKEND API CONFIG -->
+  <div id="serverDrawer" class="drawer">
+    <div class="drawer-title">
+      <span>⚙️ Cấu hình Máy chủ Backend</span>
+      <button class="mini-tool-btn" onclick="toggleDrawer('serverDrawer')">✕</button>
+    </div>
+    <input type="text" id="apiUrlInput" value="https://khotrithucso.io.vn/robot2027_2/api_chat.php" />
+    <div class="btn-row">
+      <button class="btn-action" onclick="setPresetApi('https://khotrithucso.io.vn/robot2027_2/api_chat.php')">Hosting Chính</button>
+      <button class="btn-action btn-slate" onclick="setPresetApi('http://nowbnet1.myvnc.com/robot2027/api_chat.php')">XAMPP Nhà</button>
+      <button class="btn-action btn-green" style="margin-left:auto" onclick="saveServerConfig()">Lưu</button>
+    </div>
+  </div>
+
+  <!-- ROBOT ANIMATED FACE STAGE -->
+  <div class="robot-stage">
+    <div class="stage-header">
+      <span>🤖 ROBOT 2027 • V2.3 SONG NGỮ</span>
+      <span id="activeMemberPill" class="member-badge" onclick="toggleDrawer('familyDrawer')">👤 Bi (6t)</span>
+    </div>
+
+    <div id="faceWrapper" class="face-wrapper">
+      <svg id="robotSvg" viewBox="0 0 240 130" width="210" height="114">
+        <defs>
+          <filter id="glow" x="-25%" y="-25%" width="150%" height="150%">
+            <feGaussianBlur stdDeviation="3.5" result="blur" />
+            <feMerge>
+              <feMergeNode in="blur" />
+              <feMergeNode in="SourceGraphic" />
+            </feMerge>
+          </filter>
+        </defs>
+
+        <!-- Lông mày trái & phải -->
+        <rect id="browLeft" x="56" y="24" width="38" height="6" rx="3" fill="#38bdf8" filter="url(#glow)" />
+        <rect id="browRight" x="146" y="24" width="38" height="6" rx="3" fill="#38bdf8" filter="url(#glow)" />
+
+        <!-- Mắt trái -->
+        <g id="eyeLeftGroup">
+          <circle cx="75" cy="56" r="21" fill="#38bdf8" filter="url(#glow)" />
+          <circle id="pupilLeft" class="eye-pupil" cx="69" cy="50" r="6.5" fill="#ffffff" />
+          <rect id="lidLeft" x="52" y="33" width="46" height="0" fill="#090e1a" />
+        </g>
+
+        <!-- Mắt phải -->
+        <g id="eyeRightGroup">
+          <circle cx="165" cy="56" r="21" fill="#38bdf8" filter="url(#glow)" />
+          <circle id="pupilRight" class="eye-pupil" cx="159" cy="50" r="6.5" fill="#ffffff" />
+          <rect id="lidRight" x="142" y="33" width="46" height="0" fill="#090e1a" />
+        </g>
+
+        <!-- Má hồng -->
+        <ellipse id="cheekLeft" cx="46" cy="76" rx="10" ry="5" fill="#f472b6" opacity="0.2" />
+        <ellipse id="cheekRight" cx="194" cy="76" rx="10" ry="5" fill="#f472b6" opacity="0.2" />
+
+        <!-- Miệng -->
+        <rect id="robotMouth" x="98" y="92" width="44" height="8" rx="4" fill="#38bdf8" filter="url(#glow)" />
+      </svg>
+    </div>
+
+    <div class="stage-footer">
+      <span id="proactiveHintBar" class="proactive-countdown">✨ Sẵn sàng trò chuyện qua lại</span>
+      <span id="animStateLabel">IDLE_ALIVE</span>
+    </div>
+  </div>
+
+  <!-- PERSONA & MODE CONTROLS -->
+  <div class="control-strip">
+    <div class="control-row">
+      <span class="control-label">Đang nói:</span>
+      <select id="memberSelect" class="control-select" onchange="onMemberSelectChange()"></select>
+      <span class="control-label">Chế độ:</span>
+      <select id="modeSelect" class="control-select">
+        <option value="2">2. Song hành: API + AI Nhẹ</option>
+        <option value="1">1. Siêu tốc: API / Offline</option>
+        <option value="3">3. Thuần AI Local Offline</option>
+      </select>
+    </div>
+    <div class="control-row">
+      <span class="control-label">Vai trò Bot:</span>
+      <select id="personaSelect" class="control-select" onchange="onPersonaChange()">
+        <option value="ENGLISH_TEACHER">👩‍🏫 1. Giáo viên Tiếng Anh (English Teacher)</option>
+        <option value="FRIEND_BUDDY">🤝 2. Người bạn thân vui tính (Best Buddy)</option>
+        <option value="FAMILY_MANAGER">🏠 3. Quản lý Gia đình & Người thân (Family Helper)</option>
+        <option value="STORY_TELLER">📖 4. Người kể chuyện & Đố vui (Storyteller)</option>
+        <option value="HAPPY_CHEF">👨‍🍳 5. Đầu bếp vui vẻ (Happy Chef)</option>
+        <option value="HEALTH_CARE">🩺 6. Chăm sóc sức khỏe (Care Assistant)</option>
+      </select>
+    </div>
+  </div>
+
+  <!-- MULTI-BUBBLE CONVERSATION STREAM -->
+  <div id="chatStream" class="chat-stream"></div>
+
+  <!-- CONTEXTUAL QUICK SUGGESTION CHIPS -->
+  <div id="quickChips" class="quick-chips"></div>
+
+  <!-- BOTTOM INPUT & BILINGUAL MIC DOCK -->
+  <div class="input-dock">
+    <button id="micBtn" class="mic-btn" title="Bấm để nói" onclick="toggleMic()">🎤</button>
+    <input id="chatInput" class="text-input" type="text" placeholder="Nói hoặc gõ tiếng Anh (hoặc hỏi bằng tiếng Việt)..." onkeypress="if(event.key==='Enter') handleUserSend()" />
+    <button class="send-btn" onclick="handleUserSend()">Gửi</button>
+  </div>
+
+  <script src="bilingual_engine.js"></script>
+  <script src="memory_engine.js"></script>
+  <script src="proactive_engine.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

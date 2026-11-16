@@ -1,0 +1,16 @@
+{
+  "name": "robot2027-app",
+  "version": "2.3.0",
+  "description": "Robot 2027 V2.3 - Bilingual Proactive AI Companion (Android Capacitor + llama.cpp + PHP Backend)",
+  "main": "www/app.js",
+  "scripts": {
+    "sync": "npx cap sync android"
+  },
+  "dependencies": {
+    "@capacitor/android": "^6.1.2",
+    "@capacitor/core": "^6.1.2"
+  },
+  "devDependencies": {
+    "@capacitor/cli": "^6.1.2"
+  }
+}
