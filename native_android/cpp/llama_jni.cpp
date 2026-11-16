@@ -93,7 +93,8 @@ Java_vn_io_khotrithucso_robot2027_LlamaPlugin_nativeGenerate(
     std::string prompt(promptCStr);
     env->ReleaseStringUTFChars(jPrompt, promptCStr);
 
-    llama_kv_self_clear(g_ctx);
+    // Bản llama.cpp b4600 dùng llama_kv_cache_clear thay cho llama_kv_self_clear
+    llama_kv_cache_clear(g_ctx);
     llama_sampler_reset(g_sampler);
 
     const llama_vocab * vocab = llama_model_get_vocab(g_model);
